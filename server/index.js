@@ -8,6 +8,11 @@ const user = require('./schemas/user')
 const typeDefs = `
   type Query
   type Mutation
+
+  type Info {
+    success: Boolean!
+    message: String
+  }
 `
 
 const schema = makeExecutableSchema({
