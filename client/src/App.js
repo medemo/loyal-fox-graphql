@@ -4,6 +4,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 
 import apolloClient from './graphql'
 
+import PrivateRoute from './components/PrivateRoute'
 import Todos from './containers/Todos'
 import Navbar from './components/Navbar'
 import Profile from './containers/Profile'
@@ -12,6 +13,10 @@ import Login from './containers/Login'
 
 
 class App extends React.Component {
+  componentDidMount() {
+    apolloClient.writeData({ data: { loggedIn: false } })
+  }
+
   render() {
     return (
       <ApolloProvider client={apolloClient}>
@@ -31,9 +36,9 @@ class App extends React.Component {
               <Route path="/user">
                 <Profile />
               </Route>
-              <Route path="/">
+              <PrivateRoute path="/">
                 <Todos />
-              </Route>
+              </PrivateRoute>
             </Switch>
           </div>
         </Router>

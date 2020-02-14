@@ -12,6 +12,15 @@ const ADD_TODO = gql`
   }
 `
 
+const GET_TODOS = gql`
+  query {
+    todos {
+      id
+      title
+    }
+  }
+`
+
 
 export default function AddTodo(props) {
   const [newTodo, setNewTodo] = useState('')
@@ -27,6 +36,14 @@ export default function AddTodo(props) {
     addTodo({
       variables: {
         title: newTodo
+      },
+      // refetchQueries: [{ query: GET_TODOS }],
+      update: (cache, { data }) => {
+        const cacheData = cache.readQuery({ query: GET_TODOS })
+        cache.writeQuery({
+          query: GET_TODOS,
+          data: { todos: cacheData.todos.concat([data.addTodo]) },
+        });
       }
     })
     setNewTodo('')

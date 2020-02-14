@@ -1,15 +1,29 @@
 import React, { useState } from 'react'
 import { Redirect, useLocation } from 'react-router-dom'
+import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
+
+
+
+const GET_LOGIN_STATUS = gql`
+  {
+    loggedIn @client
+  }
+`
+
 
 export function Login(props) {
   const location = useLocation()
   const [selectedId, setSelectedId] = useState(0)
+  const client = useApolloClient()
+
+  const { data } = useQuery(GET_LOGIN_STATUS)
 
   const handleLogin = () => {
-
+    client.writeData({ data: { loggedIn: true } })
   }
 
-  if (props.user) {
+  if (data?.loggedIn) {
     return <Redirect to={location.state.referrer || '/'} />
   }
 

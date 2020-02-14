@@ -28,7 +28,7 @@ const resolvers = {
   Query: {
     todos: async () => {
       let todos = await redis.hgetall('todos')
-      if (todos) {
+      if (Object.values(todos).length > 0) {
         return Object.values(todos).map(JSON.parse)
       }
       const { data } = await axios.get('http://localhost:3000/todos/?userId=1')
@@ -37,6 +37,7 @@ const resolvers = {
         return acc
       }, [])
       await redis.hset('todos', ...todos)
+      await redis.expire('todos', 60)
       return data
     },
     todo: async (parent, args) => {
@@ -45,7 +46,8 @@ const resolvers = {
         return JSON.parse(todo)
       }
       const { data } = await axios.get(`http://localhost:3000/todos/${args.id}`)
-      await redis.hset('todos', JSON.stringify(data))
+      await redis.hset('todos', args.id, JSON.stringify(data))
+      await redis.expire('todos', 60)
       return data
     },
   },
@@ -59,7 +61,8 @@ const resolvers = {
           completed: false
         }
       )
-      await redis.hset('todos', JSON.stringify(data))
+      await redis.hset('todos', args.id, JSON.stringify(data))
+      await redis.expire('todos', 60)
       return data
     },
     deleteTodo: async (parent, args) => {
