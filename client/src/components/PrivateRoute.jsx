@@ -6,7 +6,7 @@ import { gql } from 'apollo-boost'
 
 const GET_LOGIN_STATUS = gql`
   {
-    loggedIn @client
+    isLoggedIn @client
   }
 `
 
@@ -19,7 +19,7 @@ export default function PrivateRoute(props) {
   return (
     <Route {...props}>
       {
-        data.loggedIn
+        data.isLoggedIn
           ? props.children
           : <Redirect to={{
             pathname: "/login",

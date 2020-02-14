@@ -1,13 +1,19 @@
 import React, { useState } from 'react'
 import { Redirect, useLocation } from 'react-router-dom'
-import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
 
 
 
 const GET_LOGIN_STATUS = gql`
   {
-    loggedIn @client
+    isLoggedIn @client
+  }
+`
+
+const USER_LOGIN = gql`
+  mutation {
+    login @client
   }
 `
 
@@ -15,15 +21,12 @@ const GET_LOGIN_STATUS = gql`
 export function Login(props) {
   const location = useLocation()
   const [selectedId, setSelectedId] = useState(0)
-  const client = useApolloClient()
 
   const { data } = useQuery(GET_LOGIN_STATUS)
+  const [login] = useMutation(USER_LOGIN)
 
-  const handleLogin = () => {
-    client.writeData({ data: { loggedIn: true } })
-  }
 
-  if (data?.loggedIn) {
+  if (data?.isLoggedIn) {
     return <Redirect to={location.state.referrer || '/'} />
   }
 
@@ -45,7 +48,7 @@ export function Login(props) {
       <button
         data-testid="login-button"
         className="border rounded ml-3 px-5 py-2"
-        onClick={handleLogin}
+        onClick={login}
       >
         LOGIN
       </button>

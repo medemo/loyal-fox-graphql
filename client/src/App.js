@@ -13,10 +13,6 @@ import Login from './containers/Login'
 
 
 class App extends React.Component {
-  componentDidMount() {
-    apolloClient.writeData({ data: { loggedIn: false } })
-  }
-
   render() {
     return (
       <ApolloProvider client={apolloClient}>
