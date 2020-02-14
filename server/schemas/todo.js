@@ -1,10 +1,10 @@
-const { ApolloError } = require('apollo-server');
+const { ApolloError, gql } = require('apollo-server');
 const axios = require('axios')
 
 const redis = require('../redis')
 
 
-const typeDefs = `
+const typeDefs = gql`
   extend type Query {
     todos: [Todo]
     todo (id: Int): Todo
@@ -36,8 +36,8 @@ const resolvers = {
         acc.push(todo.id, JSON.stringify(todo))
         return acc
       }, [])
-      await redis.hset('todos', ...todos)
-      await redis.expire('todos', 60)
+      redis.hset('todos', ...todos)
+      redis.expire('todos', 60)
       return data
     },
     todo: async (parent, args) => {
@@ -46,8 +46,8 @@ const resolvers = {
         return JSON.parse(todo)
       }
       const { data } = await axios.get(`http://localhost:3000/todos/${args.id}`)
-      await redis.hset('todos', args.id, JSON.stringify(data))
-      await redis.expire('todos', 60)
+      redis.hset('todos', args.id, JSON.stringify(data))
+      redis.expire('todos', 60)
       return data
     },
   },
@@ -61,13 +61,13 @@ const resolvers = {
           completed: false
         }
       )
-      await redis.hset('todos', args.id, JSON.stringify(data))
-      await redis.expire('todos', 60)
+      redis.hset('todos', args.id, JSON.stringify(data))
+      redis.expire('todos', 60)
       return data
     },
     deleteTodo: async (parent, args) => {
       await axios.delete(`http://localhost:3000/todos/${args.id}`)
-      await redis.hdel('todos', args.id)
+      redis.hdel('todos', args.id)
       return {
         success: true,
         message: `todo #${args.id} deleted`
@@ -76,7 +76,7 @@ const resolvers = {
   },
   Todo: {
     user: async (parent) => {
-      const { data } = await axios.get(`http://jsonplaceholder.typicode.com/users/${parent.userId}`)
+      const { data } = await axios.get(`http://localhost:3000/users/${parent.userId}`)
       return data
     }
   }

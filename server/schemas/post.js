@@ -1,7 +1,7 @@
-const { ApolloError } = require('apollo-server');
+const { ApolloError, gql } = require('apollo-server');
 const axios = require('axios')
 
-const typeDefs = `
+const typeDefs = gql`
   extend type Query {
     posts: [Post]
     post(id: Int): Post

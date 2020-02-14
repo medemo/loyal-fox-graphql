@@ -1,6 +1,7 @@
 const axios = require('axios')
+const { gql } = require('apollo-server')
 
-const typeDefs = `
+const typeDefs = gql`
   extend type Query {
     users: [User]
     user (id: Int): User

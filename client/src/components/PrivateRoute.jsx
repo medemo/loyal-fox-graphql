@@ -10,7 +10,6 @@ const GET_LOGIN_STATUS = gql`
   }
 `
 
-
 export default function PrivateRoute(props) {
   const { data, loading } = useQuery(GET_LOGIN_STATUS)
   const location = useLocation()
