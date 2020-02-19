@@ -20,9 +20,16 @@ const schema = makeExecutableSchema({
   resolvers: [post.resolvers, comment.resolvers, todo.resolvers, user.resolvers]
 })
 
-const server = new ApolloServer({ schema });
+const server = new ApolloServer({
+  schema,
+  context: ({ req }) => {
+    return {
+      user: null
+    }
+  },
+});
 
 // The `listen` method launches a web server.
-server.listen().then(({ url }) => {
+server.listen(80).then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });

@@ -19,6 +19,13 @@ const resolvers = {
 }
 
 const client = new ApolloClient({
+  request: (operation) => {
+    operation.setContext({
+      headers: {
+        authorization: `Bearer 121323434654756686gfghgf`
+      }
+    })
+  },
   uri: 'http://localhost:4000',
   resolvers,
   typeDefs

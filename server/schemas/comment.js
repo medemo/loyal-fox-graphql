@@ -1,5 +1,7 @@
-const axios = require('axios')
 const { gql } = require('apollo-server')
+
+const jsonServer = require('../services/json-server')
+
 
 const typeDefs = gql`
   extend type Query {
@@ -18,7 +20,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     comments: async () => {
-      const { data } = await axios.get('http://localhost:3000/comments')
+      const { data } = await jsonServer.get('/comments')
       return data
     },
   }

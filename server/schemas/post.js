@@ -1,5 +1,6 @@
-const { ApolloError, gql } = require('apollo-server');
-const axios = require('axios')
+const { gql } = require('apollo-server')
+
+const jsonServer = require('../services/json-server')
 
 const typeDefs = gql`
   extend type Query {
@@ -23,18 +24,18 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     posts: async () => {
-      const { data } = await axios.get('http://localhost:3000/posts')
+      const { data } = await jsonServer.get('/posts')
       return data
     },
     post: async (parent, args) => {
-      const { data } = await axios.get(`http://localhost:3000/posts/${args.id}`)
-      return data
+      const response = await jsonServer.get(`/posts/${args.id}`)
+      return response.data
     }
   },
   Mutation: {
     addPost: async (parent, args) => {
-      const { data } = await axios.post(
-        `http://localhost:3000/posts`,
+      const { data } = await jsonServer.post(
+        `/posts`,
         {
           userId: args.userId,
           title: args.title,
@@ -46,7 +47,7 @@ const resolvers = {
   },
   Post: {
     user: async (parent) => {
-      const { data } = await axios.get(`http://localhost:3000/users/${parent.userId}`)
+      const { data } = await jsonServer.get(`/users/${parent.userId}`)
       return data
     }
   }

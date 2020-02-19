@@ -1,7 +1,7 @@
-const { ApolloError, gql } = require('apollo-server');
-const axios = require('axios')
+const { gql } = require('apollo-server');
 
 const redis = require('../redis')
+const jsonServer = require('../services/json-server')
 
 
 const typeDefs = gql`
@@ -33,7 +33,7 @@ const resolvers = {
         return todos.map(JSON.parse)
       }
 
-      const { data } = await axios.get('http://localhost:3000/todos/?userId=1')
+      const { data } = await jsonServer.get('/todos/?userId=1')
 
       todos = data.reduce((acc, todo) => {
         acc.push(todo.id, JSON.stringify(todo))
@@ -54,7 +54,8 @@ const resolvers = {
       if (todo) {
         return JSON.parse(todo)
       }
-      const { data } = await axios.get(`http://localhost:3000/todos/${args.id}`)
+
+      const { data } = await jsonServer.get(`/todos/${args.id}`)
 
       redis.hset('todos', args.id, JSON.stringify(data))
       redis.expire('todos', 60)
@@ -71,8 +72,8 @@ const resolvers = {
 
   Mutation: {
     addTodo: async (parent, args) => {
-      const { data } = await axios.post(
-        `http://localhost:3000/todos`,
+      const { data } = await jsonServer.post(
+        `/todos`,
         {
           userId: 1,
           title: args.title,
@@ -93,7 +94,7 @@ const resolvers = {
     },
 
     deleteTodo: async (parent, args) => {
-      await axios.delete(`http://localhost:3000/todos/${args.id}`)
+      await jsonServer.delete(`/todos/${args.id}`)
 
       redis.hdel('todos', args.id)
       redis.spop('todosAllIds', args.id)
@@ -107,7 +108,7 @@ const resolvers = {
 
   Todo: {
     user: async (parent) => {
-      const { data } = await axios.get(`http://localhost:3000/users/${parent.userId}`)
+      const { data } = await jsonServer.get(`/users/${parent.userId}`)
       return data
     }
   }

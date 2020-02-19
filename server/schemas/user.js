@@ -1,6 +1,8 @@
 const axios = require('axios')
 const { gql } = require('apollo-server')
 
+const jsonServer = require('../services/json-server')
+
 const typeDefs = gql`
   extend type Query {
     users: [User]
@@ -18,11 +20,11 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     users: async () => {
-      const { data } = await axios.get('http://localhost:3000/users')
+      const { data } = await jsonServer.get('/users')
       return data
     },
     user: async (parent, args) => {
-      const { data } = await axios.get(`http://localhost:3000/users/${args.id}`)
+      const { data } = await jsonServer.get(`/users/${args.id}`)
       return data
     }
   }
