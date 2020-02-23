@@ -1,4 +1,4 @@
-FROM node:lts
+FROM node:lts-slim
 
 # Set the working directory
 WORKDIR /usr/src/app
@@ -13,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Inform Docker that the container is listening on the specified port at runtime.
-EXPOSE 4000
+EXPOSE 80
 
 # Run the specified command within the container.
 CMD [ "npm", "start" ]

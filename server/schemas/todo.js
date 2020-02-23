@@ -1,6 +1,6 @@
 const { gql } = require('apollo-server');
 
-const redis = require('../redis')
+const redis = require('../services/redis')
 const jsonServer = require('../services/json-server')
 
 

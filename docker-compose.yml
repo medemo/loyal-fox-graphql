@@ -1,23 +1,31 @@
 version: '3'
 services:
+  # server:
+  #   build: ./server
+  #   ports:
+  #     - "4000:80"
+  #   environment: 
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #     - JSONPLACEHOLDER=http://json-server/
+  #   restart: always
   server-dev:
     build: ./server
+    image: loyal-fox-gql-server
     command: npm run dev
     ports:
-      - "5000:80"
-    volumes:
-      - ./server:/usr/src/app
-  server:
-    build: ./server
-    ports:
       - "4000:80"
+    depends_on:
+      - redis
+      - jsonplaceholder
     volumes:
       - ./server:/usr/src/app
-  json-server:
-    image: vimagick/json-server
-    command: -H 0.0.0.0 -p 80 -w db.json
-    volumes:
-      - ./data:/data
+    environment: 
+      - REDIS_HOST=redis
+      - JSONPLACEHOLDER=http://jsonplaceholder/
+    restart: always
+  jsonplaceholder:
+    image: armedi/jsonplaceholder
     restart: always
   redis:
     image: "redis"
